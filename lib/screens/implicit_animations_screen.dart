@@ -34,9 +34,9 @@ class _ImplicitAnimationsScreenState extends State<ImplicitAnimationsScreen> {
             // AnimatedContainer is a widget that automatically animates changes to its properties.
             AnimatedContainer(
               duration: const Duration(seconds: 1),
-              curve: Curves.easeInOut,
-              width: _visible ? size.width * 0.8 : size.width * 0.3,
-              height: _visible ? size.width * 0.3 : size.width * 0.8,
+              curve: Curves.elasticOut,
+              width: _visible ? size.width * 0.8 : size.width * 0.6,
+              height: _visible ? size.width * 0.6 : size.width * 0.8,
               transform: _visible
                   ? Matrix4.rotationZ(0)
                   : Matrix4.rotationZ(0.5 * 3.14),
