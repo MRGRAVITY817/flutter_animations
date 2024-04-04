@@ -14,6 +14,8 @@ class ExplicitAnimationsScreen extends HookWidget {
     // ** if you have multiple animations, you can use TickerProviderStateMixin
     final controller = useAnimationController(
       duration: const Duration(seconds: 2),
+      lowerBound: 0.5,
+      upperBound: 2.0,
       vsync: tickerProvider,
     );
 
@@ -37,10 +39,15 @@ class ExplicitAnimationsScreen extends HookWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ScaleTransition(
-              scale: controller,
-              child: const FlutterLogo(size: 200),
+          children: [
+            AnimatedBuilder(
+              animation: controller,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: controller.value,
+                  child: const FlutterLogo(size: 200),
+                );
+              },
             ),
             const SizedBox(height: 20),
             Wrap(
