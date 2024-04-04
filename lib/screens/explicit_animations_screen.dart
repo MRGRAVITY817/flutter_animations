@@ -28,6 +28,21 @@ class ExplicitAnimationsScreen extends HookWidget {
       ),
     ).animate(controller);
 
+    late final Animation<double> rotate = Tween<double>(
+      begin: 0,
+      end: 0.5 * 3.14,
+    ).animate(controller);
+
+    late final Animation<double> scale = Tween<double>(
+      begin: 1,
+      end: 0.5,
+    ).animate(controller);
+
+    late final Animation<Offset> offset = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(0.5, 0.5),
+    ).animate(controller);
+
     void play() {
       // Run the animation forward
       controller.forward();
@@ -51,11 +66,20 @@ class ExplicitAnimationsScreen extends HookWidget {
           children: [
             // Widgets with "Transitions" suffix are used for explicit animations
             // For them, we don't need to wrap them with "AnimatedBuilder"
-            DecoratedBoxTransition(
-              decoration: decoration,
-              child: const SizedBox(
-                width: 300,
-                height: 300,
+            SlideTransition(
+              position: offset,
+              child: ScaleTransition(
+                scale: scale,
+                child: RotationTransition(
+                  turns: rotate,
+                  child: DecoratedBoxTransition(
+                    decoration: decoration,
+                    child: const SizedBox(
+                      width: 300,
+                      height: 300,
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 60),
