@@ -32,20 +32,19 @@ class _ImplicitAnimationsScreenState extends State<ImplicitAnimationsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // AnimatedContainer is a widget that automatically animates changes to its properties.
-            AnimatedContainer(
-              duration: const Duration(seconds: 1),
-              curve: Curves.elasticOut,
-              width: _visible ? size.width * 0.8 : size.width * 0.6,
-              height: _visible ? size.width * 0.6 : size.width * 0.8,
-              transform: _visible
-                  ? Matrix4.rotationZ(0)
-                  : Matrix4.rotationZ(0.5 * 3.14),
-              transformAlignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: _visible ? Colors.blue : Colors.amber,
-                borderRadius: BorderRadius.circular(_visible ? 0 : 100),
-              ),
-            ),
+            TweenAnimationBuilder(
+                tween: Tween<double>(
+                  begin: 0,
+                  end: _visible ? size.width * 0.8 : size.width * 0.2,
+                ),
+                duration: const Duration(seconds: 1),
+                builder: (context, double value, child) {
+                  return Container(
+                    width: value,
+                    height: 200,
+                    color: Colors.blue,
+                  );
+                }),
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: _trigger,
