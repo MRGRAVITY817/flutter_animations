@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ImplicitAnimationsScreen extends StatefulWidget {
   const ImplicitAnimationsScreen({super.key});
@@ -30,13 +31,18 @@ class _ImplicitAnimationsScreenState extends State<ImplicitAnimationsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Widgets with "Animated" prefix are implicit animations
-            AnimatedOpacity(
+            AnimatedAlign(
+              alignment: _visible ? Alignment.topLeft : Alignment.topRight,
               duration: const Duration(seconds: 1),
-              opacity: _visible ? 1 : 0,
-              child: Container(
-                width: size.width * 0.8,
-                height: size.width * 0.8,
-                color: Colors.amber,
+              // Animated widgets can be nested (copositional)
+              child: AnimatedOpacity(
+                duration: const Duration(seconds: 1),
+                opacity: _visible ? 1 : 0,
+                child: Container(
+                  width: size.width * 0.8,
+                  height: size.width * 0.8,
+                  color: Colors.amber,
+                ),
               ),
             ),
             const SizedBox(height: 32),
