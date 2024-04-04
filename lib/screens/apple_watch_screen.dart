@@ -11,7 +11,7 @@ class AppleWatchScreen extends HookWidget {
     final tickerProvider = useSingleTickerProvider();
     final animationController = useAnimationController(
       vsync: tickerProvider,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 1500),
     )..forward();
 
     late final curve = CurvedAnimation(
@@ -19,27 +19,32 @@ class AppleWatchScreen extends HookWidget {
       curve: Curves.elasticOut,
     );
 
+    final random = Random();
+
     final progress = useState<Animation<double>>(
       Tween<double>(
-        begin: 0.0005,
-        end: 1.5,
+        begin: 0.005,
+        end: 1.5 * random.nextDouble(),
       ).animate(curve),
     );
 
+    final redArcEnd = useState<double>(random.nextDouble());
+    final greenArcEnd = useState<double>(random.nextDouble());
+    final blueArcEnd = useState<double>(random.nextDouble());
+
     void animateValues() {
       final newBegin = progress.value.value;
-      final random = Random();
       final newEnd = random.nextDouble() * 2.0;
 
+      // Update arc end values
+      redArcEnd.value = random.nextDouble();
+      greenArcEnd.value = random.nextDouble();
+      blueArcEnd.value = random.nextDouble();
+
       progress.value = Tween(begin: newBegin, end: newEnd).animate(curve);
+
       animationController.forward(from: 0.0);
     }
-
-    useEffect(() {
-      return () {
-        animationController.dispose();
-      };
-    }, []);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,6 +62,9 @@ class AppleWatchScreen extends HookWidget {
               size: const Size(300, 300),
               painter: AppleWatchPainter(
                 progress: progress.value.value,
+                redArcEnd: redArcEnd.value,
+                greenArcEnd: greenArcEnd.value,
+                blueArcEnd: blueArcEnd.value,
               ),
             );
           },
@@ -75,8 +83,16 @@ class AppleWatchScreen extends HookWidget {
 
 class AppleWatchPainter extends CustomPainter {
   final double progress;
+  final double redArcEnd;
+  final double greenArcEnd;
+  final double blueArcEnd;
 
-  AppleWatchPainter({required this.progress});
+  AppleWatchPainter({
+    required this.progress,
+    this.redArcEnd = 0.5,
+    this.greenArcEnd = 0.5,
+    this.blueArcEnd = 0.5,
+  });
 
   static const strokeWidth = 22.0;
   static const startingAngle = -0.5 * pi;
@@ -85,94 +101,43 @@ class AppleWatchPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
 
-    // Red (accent color of Apple Watch)
-    const redColor = Color(0xFFFD2D55);
-    final redCircleRadius = size.width / 2;
-    // draw red circle
-    final Paint redCirclePaint = Paint()
-      ..color = redColor.withOpacity(0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), redCircleRadius,
-        redCirclePaint);
-
-    // draw red arc
-    final Paint redArcPaint = Paint()
-      ..color = redColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: center,
-        radius: redCircleRadius,
-      ),
-      startingAngle,
-      progress * pi,
-      false,
-      redArcPaint,
+    // Draw red circle and arc
+    drawCircleAndArc(
+      canvas: canvas,
+      center: center,
+      circleRadius: size.width / 2.0,
+      circleColor: Colors.redAccent,
+      arcColor: Colors.redAccent.shade400,
+      arcEnd: redArcEnd,
+      progress: progress,
+      strokeWidth: strokeWidth,
+      startingAngle: startingAngle,
     );
 
-    // Green
-    const greenColor = Colors.limeAccent;
-    final greenCircleRadius = size.width / 2.5;
-
-    // draw green circle
-    final Paint greenCirclePaint = Paint()
-      ..color = greenColor.withOpacity(0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    canvas.drawCircle(center, greenCircleRadius, greenCirclePaint);
-
-    // draw green arc
-    final Paint greenArcPaint = Paint()
-      ..color = greenColor.shade400
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: center,
-        radius: greenCircleRadius,
-      ),
-      startingAngle,
-      progress * pi,
-      false,
-      greenArcPaint,
+    // Draw green circle and arc
+    drawCircleAndArc(
+      canvas: canvas,
+      center: center,
+      circleRadius: size.width / 2.5,
+      circleColor: Colors.limeAccent,
+      arcColor: Colors.limeAccent.shade400,
+      arcEnd: greenArcEnd,
+      progress: progress,
+      strokeWidth: strokeWidth,
+      startingAngle: startingAngle,
     );
 
-    // Blue
-    final blueCircleRadius = size.width / 3.44;
-    const blueColor = Colors.cyanAccent;
-
-    // draw blue circle
-    final Paint blueCirclePaint = Paint()
-      ..color = blueColor.withOpacity(0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    canvas.drawCircle(center, blueCircleRadius, blueCirclePaint);
-
-    // draw blue arc
-    final Paint blueArcPaint = Paint()
-      ..color = blueColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(
-      Rect.fromCircle(
-        center: center,
-        radius: blueCircleRadius,
-      ),
-      startingAngle,
-      progress * pi,
-      false,
-      blueArcPaint,
+    // Draw blue circle and arc
+    drawCircleAndArc(
+      canvas: canvas,
+      center: center,
+      circleRadius: size.width / 3.33,
+      circleColor: Colors.cyanAccent,
+      arcColor: Colors.cyanAccent.shade400,
+      arcEnd: blueArcEnd,
+      progress: progress,
+      strokeWidth: strokeWidth,
+      startingAngle: startingAngle,
     );
   }
 
@@ -181,4 +146,41 @@ class AppleWatchPainter extends CustomPainter {
     // Repaint only when progress changes
     return oldDelegate.progress != progress;
   }
+}
+
+/// Helper function to draw a circle and an arc on the canvas
+void drawCircleAndArc({
+  required Canvas canvas,
+  required Offset center,
+  required double circleRadius,
+  required Color circleColor,
+  required double arcEnd,
+  required Color arcColor,
+  required double progress,
+  required double strokeWidth,
+  required double startingAngle,
+}) {
+  // draw circle
+  final Paint circlePaint = Paint()
+    ..color = circleColor.withOpacity(0.3)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = strokeWidth;
+
+  canvas.drawCircle(center, circleRadius, circlePaint);
+
+  // draw arc
+  final Paint arcPaint = Paint()
+    ..color = arcColor
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = strokeWidth
+    ..strokeCap = StrokeCap.round;
+  final arcRect = Rect.fromCircle(center: center, radius: circleRadius);
+
+  canvas.drawArc(
+    arcRect,
+    startingAngle,
+    arcEnd * progress * pi,
+    false,
+    arcPaint,
+  );
 }
