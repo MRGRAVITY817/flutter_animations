@@ -14,10 +14,13 @@ class ExplicitAnimationsScreen extends HookWidget {
     // ** if you have multiple animations, you can use TickerProviderStateMixin
     final controller = useAnimationController(
       duration: const Duration(seconds: 2),
-      lowerBound: 0.5,
-      upperBound: 2.0,
       vsync: tickerProvider,
     );
+
+    late final Animation<Color?> color = ColorTween(
+      begin: Colors.amber,
+      end: Colors.red,
+    ).animate(controller);
 
     void play() {
       // Run the animation forward
@@ -41,11 +44,12 @@ class ExplicitAnimationsScreen extends HookWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedBuilder(
-              animation: controller,
+              animation: color,
               builder: (context, child) {
-                return Transform.scale(
-                  scale: controller.value,
-                  child: const FlutterLogo(size: 200),
+                return Container(
+                  width: 200,
+                  height: 200,
+                  color: color.value,
                 );
               },
             ),
