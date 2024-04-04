@@ -71,10 +71,20 @@ class ExplicitAnimationsScreen extends HookWidget {
       sliderValue.value = value;
     }
 
-    controller.addListener(() {
-      // This will be called every frame
-      sliderValue.value = controller.value;
-    });
+    controller
+      ..addListener(() {
+        // This will be called every frame
+        sliderValue.value = controller.value;
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          // Animation is completed
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          // Animation is dismissed
+          controller.forward();
+        }
+      });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Explicit Animations')),
