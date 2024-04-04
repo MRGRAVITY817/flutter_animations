@@ -22,6 +22,7 @@ class MenuScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () => goToPage(const ImplicitAnimationsScreen()),
