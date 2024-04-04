@@ -11,15 +11,35 @@ class AppleWatchScreen extends HookWidget {
     final tickerProvider = useSingleTickerProvider();
     final animationController = useAnimationController(
       vsync: tickerProvider,
-      duration: const Duration(milliseconds: 3000),
-      lowerBound: 0.005,
-      upperBound: 2,
+      duration: const Duration(seconds: 1),
+    )..forward();
+
+    late final curve = CurvedAnimation(
+      parent: animationController,
+      curve: Curves.elasticOut,
+    );
+
+    final progress = useState<Animation<double>>(
+      Tween<double>(
+        begin: 0.0005,
+        end: 1.5,
+      ).animate(curve),
     );
 
     void animateValues() {
-      animationController.reset();
-      animationController.forward();
+      final newBegin = progress.value.value;
+      final random = Random();
+      final newEnd = random.nextDouble() * 2.0;
+
+      progress.value = Tween(begin: newBegin, end: newEnd).animate(curve);
+      animationController.forward(from: 0.0);
     }
+
+    useEffect(() {
+      return () {
+        animationController.dispose();
+      };
+    }, []);
 
     return Scaffold(
       appBar: AppBar(
@@ -30,13 +50,13 @@ class AppleWatchScreen extends HookWidget {
       backgroundColor: Colors.black,
       body: Center(
         child: AnimatedBuilder(
-          animation: animationController,
+          animation: progress.value,
           builder: (context, child) {
             return CustomPaint(
               // Creates 400 x 400 canvas
               size: const Size(300, 300),
               painter: AppleWatchPainter(
-                progress: animationController.value,
+                progress: progress.value.value,
               ),
             );
           },
