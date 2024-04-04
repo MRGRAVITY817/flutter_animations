@@ -13,13 +13,19 @@ class ExplicitAnimationsScreen extends HookWidget {
     // Our animation controller will need a "ticker" to run the animation
     // ** if you have multiple animations, you can use TickerProviderStateMixin
     final controller = useAnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
       vsync: tickerProvider,
     );
 
-    late final Animation<Color?> color = ColorTween(
-      begin: Colors.amber,
-      end: Colors.red,
+    late final Animation<Decoration> decoration = DecorationTween(
+      begin: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      end: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(100),
+      ),
     ).animate(controller);
 
     void play() {
@@ -43,17 +49,16 @@ class ExplicitAnimationsScreen extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedBuilder(
-              animation: color,
-              builder: (context, child) {
-                return Container(
-                  width: 200,
-                  height: 200,
-                  color: color.value,
-                );
-              },
+            // Widgets with "Transitions" suffix are used for explicit animations
+            // For them, we don't need to wrap them with "AnimatedBuilder"
+            DecoratedBoxTransition(
+              decoration: decoration,
+              child: const SizedBox(
+                width: 300,
+                height: 300,
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 60),
             Wrap(
               direction: Axis.horizontal,
               spacing: 10,
