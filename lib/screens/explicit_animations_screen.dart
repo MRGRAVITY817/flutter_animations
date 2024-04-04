@@ -13,8 +13,13 @@ class ExplicitAnimationsScreen extends HookWidget {
     // Our animation controller will need a "ticker" to run the animation
     // ** if you have multiple animations, you can use TickerProviderStateMixin
     final controller = useAnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
       vsync: tickerProvider,
+    );
+
+    final CurvedAnimation curved = CurvedAnimation(
+      parent: controller,
+      curve: Curves.elasticInOut,
     );
 
     late final Animation<Decoration> decoration = DecorationTween(
@@ -26,22 +31,22 @@ class ExplicitAnimationsScreen extends HookWidget {
         color: Colors.blue,
         borderRadius: BorderRadius.circular(100),
       ),
-    ).animate(controller);
+    ).animate(curved);
 
     late final Animation<double> rotate = Tween<double>(
       begin: 0,
-      end: 0.5 * 3.14,
-    ).animate(controller);
+      end: 0.5,
+    ).animate(curved);
 
     late final Animation<double> scale = Tween<double>(
       begin: 1,
       end: 0.5,
-    ).animate(controller);
+    ).animate(curved);
 
     late final Animation<Offset> offset = Tween<Offset>(
       begin: const Offset(0, 0),
       end: const Offset(0.5, 0.5),
-    ).animate(controller);
+    ).animate(curved);
 
     void play() {
       // Run the animation forward
