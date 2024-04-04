@@ -71,19 +71,25 @@ class ExplicitAnimationsScreen extends HookWidget {
       sliderValue.value = value;
     }
 
+    final isLooping = useState(false);
+
+    void toggleLooping() {
+      if (isLooping.value) {
+        controller.stop(canceled: true);
+      } else {
+        controller.repeat(reverse: true);
+      }
+
+      isLooping.value = !isLooping.value;
+    }
+
     controller
       ..addListener(() {
         // This will be called every frame
         sliderValue.value = controller.value;
       })
       ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          // Animation is completed
-          controller.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          // Animation is dismissed
-          controller.forward();
-        }
+        print('Animation Status: $status');
       });
 
     return Scaffold(
@@ -126,6 +132,10 @@ class ExplicitAnimationsScreen extends HookWidget {
                 ElevatedButton(
                   onPressed: rewind,
                   child: const Text('Rewind'),
+                ),
+                ElevatedButton(
+                  onPressed: toggleLooping,
+                  child: Text(isLooping.value ? 'Stop Looping' : 'Loop'),
                 ),
               ],
             ),
