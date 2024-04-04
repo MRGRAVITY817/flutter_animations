@@ -45,7 +45,7 @@ class ExplicitAnimationsScreen extends HookWidget {
 
     late final Animation<Offset> offset = Tween<Offset>(
       begin: const Offset(0, 0),
-      end: const Offset(0.5, 0.5),
+      end: const Offset(0.3, 0.2),
     ).animate(curved);
 
     void play() {
@@ -61,6 +61,14 @@ class ExplicitAnimationsScreen extends HookWidget {
     void rewind() {
       // Run the animation in reverse
       controller.reverse();
+    }
+
+    final sliderValue = useState<double>(0.0);
+
+    void onChangedSlider(double value) {
+      // Set the animation value
+      sliderValue.value = value;
+      controller.value = value;
     }
 
     return Scaffold(
@@ -105,6 +113,11 @@ class ExplicitAnimationsScreen extends HookWidget {
                   child: const Text('Rewind'),
                 ),
               ],
+            ),
+            const SizedBox(height: 60),
+            Slider(
+              value: sliderValue.value,
+              onChanged: onChangedSlider,
             ),
           ],
         ),
