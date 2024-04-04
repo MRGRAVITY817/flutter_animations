@@ -1,12 +1,26 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class AppleWatchScreen extends StatelessWidget {
+class AppleWatchScreen extends HookWidget {
   const AppleWatchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final tickerProvider = useSingleTickerProvider();
+    final animationController = useAnimationController(
+      vsync: tickerProvider,
+      duration: const Duration(milliseconds: 3000),
+      lowerBound: 0.005,
+      upperBound: 2,
+    );
+
+    void animateValues() {
+      animationController.reset();
+      animationController.forward();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Apple Watch"),
@@ -15,10 +29,24 @@ class AppleWatchScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.black,
       body: Center(
-        child: CustomPaint(
-          // Creates 400 x 400 canvas
-          size: const Size(300, 300),
-          painter: AppleWatchPainter(),
+        child: AnimatedBuilder(
+          animation: animationController,
+          builder: (context, child) {
+            return CustomPaint(
+              // Creates 400 x 400 canvas
+              size: const Size(300, 300),
+              painter: AppleWatchPainter(
+                progress: animationController.value,
+              ),
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white.withOpacity(0.3),
+        onPressed: animateValues,
+        child: const Icon(
+          Icons.refresh,
         ),
       ),
     );
@@ -26,6 +54,10 @@ class AppleWatchScreen extends StatelessWidget {
 }
 
 class AppleWatchPainter extends CustomPainter {
+  final double progress;
+
+  AppleWatchPainter({required this.progress});
+
   static const strokeWidth = 22.0;
   static const startingAngle = -0.5 * pi;
 
@@ -58,7 +90,7 @@ class AppleWatchPainter extends CustomPainter {
         radius: redCircleRadius,
       ),
       startingAngle,
-      0.5 * pi,
+      progress * pi,
       false,
       redArcPaint,
     );
@@ -88,7 +120,7 @@ class AppleWatchPainter extends CustomPainter {
         radius: greenCircleRadius,
       ),
       startingAngle,
-      1.2 * pi,
+      progress * pi,
       false,
       greenArcPaint,
     );
@@ -118,14 +150,15 @@ class AppleWatchPainter extends CustomPainter {
         radius: blueCircleRadius,
       ),
       startingAngle,
-      1.6 * pi,
+      progress * pi,
       false,
       blueArcPaint,
     );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(covariant AppleWatchPainter oldDelegate) {
+    // Repaint only when progress changes
+    return oldDelegate.progress != progress;
   }
 }
