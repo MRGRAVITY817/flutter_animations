@@ -27,93 +27,97 @@ class AppleWatchScreen extends StatelessWidget {
 
 class AppleWatchPainter extends CustomPainter {
   static const strokeWidth = 22.0;
+  static const startingAngle = -0.5 * pi;
+
   @override
   void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+
+    // Red (accent color of Apple Watch)
+    const redColor = Color(0xFFFD2D55);
+    final redCircleRadius = size.width / 2;
     // draw red circle
     final Paint redCirclePaint = Paint()
-      ..color = Colors.red.withOpacity(0.4)
+      ..color = redColor.withOpacity(0.4)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 
-    canvas.drawCircle(
-      Offset(size.width / 2, size.height / 2),
-      size.width / 2,
-      redCirclePaint,
-    );
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), redCircleRadius,
+        redCirclePaint);
 
     // draw red arc
     final Paint redArcPaint = Paint()
-      ..color = Colors.redAccent.shade400
+      ..color = redColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
       Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2),
-        radius: size.width / 2,
+        center: center,
+        radius: redCircleRadius,
       ),
-      -0.5 * pi,
+      startingAngle,
       0.5 * pi,
       false,
       redArcPaint,
     );
 
+    // Green
+    const greenColor = Colors.limeAccent;
+    final greenCircleRadius = size.width / 2.5;
+
     // draw green circle
     final Paint greenCirclePaint = Paint()
-      ..color = Colors.limeAccent.withOpacity(0.4)
+      ..color = greenColor.withOpacity(0.4)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 
-    canvas.drawCircle(
-      Offset(size.width / 2, size.height / 2),
-      size.width / 2.5,
-      greenCirclePaint,
-    );
+    canvas.drawCircle(center, greenCircleRadius, greenCirclePaint);
 
     // draw green arc
     final Paint greenArcPaint = Paint()
-      ..color = Colors.limeAccent.shade400
+      ..color = greenColor.shade400
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
       Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2),
-        radius: size.width / 2.5,
+        center: center,
+        radius: greenCircleRadius,
       ),
-      -0.5 * pi,
+      startingAngle,
       1.2 * pi,
       false,
       greenArcPaint,
     );
 
+    // Blue
+    final blueCircleRadius = size.width / 3.44;
+    const blueColor = Colors.cyanAccent;
+
     // draw blue circle
     final Paint blueCirclePaint = Paint()
-      ..color = Colors.cyanAccent.withOpacity(0.4)
+      ..color = blueColor.withOpacity(0.4)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 25;
+      ..strokeWidth = strokeWidth;
 
-    canvas.drawCircle(
-      Offset(size.width / 2, size.height / 2),
-      size.width / 3.44,
-      blueCirclePaint,
-    );
+    canvas.drawCircle(center, blueCircleRadius, blueCirclePaint);
 
     // draw blue arc
     final Paint blueArcPaint = Paint()
-      ..color = Colors.cyanAccent.shade400
+      ..color = blueColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 25
+      ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
       Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2),
-        radius: size.width / 3.44,
+        center: center,
+        radius: blueCircleRadius,
       ),
-      -0.5 * pi,
+      startingAngle,
       1.6 * pi,
       false,
       blueArcPaint,
