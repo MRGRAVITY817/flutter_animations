@@ -63,13 +63,18 @@ class ExplicitAnimationsScreen extends HookWidget {
       controller.reverse();
     }
 
-    final sliderValue = useState<double>(0.0);
+    final sliderValue = ValueNotifier<double>(0.0);
 
     void onChangedSlider(double value) {
       // Set the animation value
-      sliderValue.value = value;
       controller.value = value;
+      sliderValue.value = value;
     }
+
+    controller.addListener(() {
+      // This will be called every frame
+      sliderValue.value = controller.value;
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Explicit Animations')),
@@ -115,9 +120,16 @@ class ExplicitAnimationsScreen extends HookWidget {
               ],
             ),
             const SizedBox(height: 60),
-            Slider(
-              value: sliderValue.value,
-              onChanged: onChangedSlider,
+            ValueListenableBuilder(
+              valueListenable: sliderValue,
+              builder: (context, value, child) {
+                return Slider(
+                  value: value,
+                  onChanged: onChangedSlider,
+                  activeColor: Colors.blue,
+                  inactiveColor: Colors.grey.shade200,
+                );
+              },
             ),
           ],
         ),
