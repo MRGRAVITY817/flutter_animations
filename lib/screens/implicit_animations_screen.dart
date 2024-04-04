@@ -36,10 +36,10 @@ class _ImplicitAnimationsScreenState extends State<ImplicitAnimationsScreen> {
                 tween: ColorTween(begin: Colors.red, end: Colors.green),
                 duration: const Duration(seconds: 1),
                 builder: (context, value, child) {
-                  return Container(
-                    width: 200,
-                    height: 200,
+                  return Image.network(
+                    "https://picsum.photos/200/300",
                     color: value,
+                    colorBlendMode: BlendMode.modulate,
                   );
                 }),
             const SizedBox(height: 32),
