@@ -33,16 +33,13 @@ class _ImplicitAnimationsScreenState extends State<ImplicitAnimationsScreen> {
           children: [
             // AnimatedContainer is a widget that automatically animates changes to its properties.
             TweenAnimationBuilder(
-                tween: Tween<double>(
-                  begin: 0,
-                  end: _visible ? size.width * 0.8 : size.width * 0.2,
-                ),
+                tween: ColorTween(begin: Colors.red, end: Colors.green),
                 duration: const Duration(seconds: 1),
-                builder: (context, double value, child) {
+                builder: (context, value, child) {
                   return Container(
-                    width: value,
+                    width: 200,
                     height: 200,
-                    color: Colors.blue,
+                    color: value,
                   );
                 }),
             const SizedBox(height: 32),
