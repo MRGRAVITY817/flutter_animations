@@ -94,9 +94,6 @@ class AppleWatchPainter extends CustomPainter {
     this.blueArcEnd = 0.5,
   });
 
-  static const strokeWidth = 22.0;
-  static const startingAngle = -0.5 * pi;
-
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -110,8 +107,6 @@ class AppleWatchPainter extends CustomPainter {
       arcColor: Colors.redAccent.shade400,
       arcEnd: redArcEnd,
       progress: progress,
-      strokeWidth: strokeWidth,
-      startingAngle: startingAngle,
     );
 
     // Draw green circle and arc
@@ -123,8 +118,6 @@ class AppleWatchPainter extends CustomPainter {
       arcColor: Colors.limeAccent.shade400,
       arcEnd: greenArcEnd,
       progress: progress,
-      strokeWidth: strokeWidth,
-      startingAngle: startingAngle,
     );
 
     // Draw blue circle and arc
@@ -136,8 +129,6 @@ class AppleWatchPainter extends CustomPainter {
       arcColor: Colors.cyanAccent.shade400,
       arcEnd: blueArcEnd,
       progress: progress,
-      strokeWidth: strokeWidth,
-      startingAngle: startingAngle,
     );
   }
 
@@ -157,9 +148,10 @@ void drawCircleAndArc({
   required double arcEnd,
   required Color arcColor,
   required double progress,
-  required double strokeWidth,
-  required double startingAngle,
 }) {
+  const strokeWidth = 22.0;
+  const startingAngle = -0.5 * pi;
+
   // draw circle
   final Paint circlePaint = Paint()
     ..color = circleColor.withOpacity(0.3)
