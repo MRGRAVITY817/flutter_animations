@@ -1,45 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class MusicPlayerScreen extends StatelessWidget {
+class MusicPlayerScreen extends HookWidget {
   const MusicPlayerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const maxIndex = 6;
+
+    final pageController = usePageController(viewportFraction: 0.8);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Music Player"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.music_note,
-              size: 100,
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                // Play music
-              },
-              child: const Text("Play"),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                // Pause music
-              },
-              child: const Text("Pause"),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                // Stop music
-              },
-              child: const Text("Stop"),
-            ),
-          ],
-        ),
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: pageController,
+            itemCount: maxIndex,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 350,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/covers/$index.png"),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Text(
+                    "Song $index",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text("Artist $index"),
+                ],
+              );
+            },
+          )
+        ],
       ),
     );
   }
