@@ -13,6 +13,10 @@ class SwipingCardsScreen extends HookWidget {
       posX.value += details.delta.dx;
     }
 
+    void onDragEnd(DragEndDetails details) {
+      posX.value = 0;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Swiping Cards"),
@@ -23,12 +27,16 @@ class SwipingCardsScreen extends HookWidget {
             alignment: Alignment.topCenter,
             child: GestureDetector(
               onHorizontalDragUpdate: onDragUpdate,
-              child: Material(
-                elevation: 10,
-                child: SizedBox(
-                  width: size.width * 0.8,
-                  height: size.height * 0.8,
-                  child: Container(color: Colors.red),
+              onHorizontalDragEnd: onDragEnd,
+              child: Transform.translate(
+                offset: Offset(posX.value, 0),
+                child: Material(
+                  elevation: 10,
+                  child: SizedBox(
+                    width: size.width * 0.8,
+                    height: size.height * 0.8,
+                    child: Container(color: Colors.red),
+                  ),
                 ),
               ),
             ),
