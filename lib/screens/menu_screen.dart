@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animations/screens/apple_watch_screen.dart';
 import 'package:flutter_animations/screens/explicit_animations_screen.dart';
 import 'package:flutter_animations/screens/implicit_animations_screen.dart';
+import 'package:flutter_animations/screens/music_player_screen.dart';
 import 'package:flutter_animations/screens/swiping_cards_screen.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -23,27 +24,31 @@ class MenuScreen extends StatelessWidget {
         title: const Text("Flutter Animations"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
+          direction: Axis.vertical,
+          spacing: 10,
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () => goToPage(const ImplicitAnimationsScreen()),
               child: const Text("Implicit Animations"),
             ),
-            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () => goToPage(const ExplicitAnimationsScreen()),
               child: const Text("Explicit Animations"),
             ),
-            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () => goToPage(const AppleWatchScreen()),
               child: const Text("Apple Watch"),
             ),
-            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () => goToPage(const SwipingCardsScreen()),
               child: const Text("Swiping Cards"),
+            ),
+            ElevatedButton(
+              onPressed: () => goToPage(const MusicPlayerScreen()),
+              child: const Text("Music Player"),
             ),
           ],
         ),
