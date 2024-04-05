@@ -12,9 +12,16 @@ class MusicPlayerScreen extends HookWidget {
 
     final pageController = usePageController(viewportFraction: 0.8);
     final currentPage = useState(0);
+    final scroll = useState(0.0);
 
-    void handlePageChange(int index) {
-      currentPage.value = index;
+    pageController.addListener(() {
+      if (pageController.page == null) return;
+
+      scroll.value = pageController.page!;
+    });
+
+    void handlePageChange(int newPage) {
+      currentPage.value = newPage;
     }
 
     return Scaffold(
@@ -54,24 +61,35 @@ class MusicPlayerScreen extends HookWidget {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    height: 350,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                      image: DecorationImage(
-                        image: AssetImage("assets/covers/$index.png"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: scroll,
+                      builder: (context, scrollValue, child) {
+                        final diff = (scrollValue - index).abs();
+                        final scale = 1 - (diff * 0.1);
+
+                        return Transform.scale(
+                          scale: scale,
+                          child: Container(
+                            height: 350,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                              image: DecorationImage(
+                                image: AssetImage("assets/covers/$index.png"),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.topCenter,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                   const SizedBox(
                     height: 32,
                   ),
