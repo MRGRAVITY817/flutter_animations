@@ -11,7 +11,7 @@ class SwipingCardsScreen extends HookWidget {
     final size = MediaQuery.of(context).size;
     late final dropzone = size.width + 100;
     final index = useState<int>(0);
-    final maxIndex = 6;
+    const maxIndex = 6;
 
     final tickerProvider = useSingleTickerProvider();
     final position = useAnimationController(
@@ -69,51 +69,92 @@ class SwipingCardsScreen extends HookWidget {
       end: 1,
     );
 
+    void swipe({required bool isLeft}) {
+      position
+          .animateTo(
+            isLeft ? -dropzone : dropzone,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+          )
+          .whenComplete(whenDragComplete);
+    }
+
+    void swipeLeft() {
+      swipe(isLeft: true);
+    }
+
+    void swipeRight() {
+      swipe(isLeft: false);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Swiping Cards"),
       ),
       body: AnimatedBuilder(
-          animation: position,
-          builder: (context, child) {
-            final angle = rotation.transform(
-                  // Start from the center of the screen
-                  (position.value + size.width / 2) / size.width,
-                ) *
-                (pi / 180);
+        animation: position,
+        builder: (context, child) {
+          final angle = rotation.transform(
+                // Start from the center of the screen
+                (position.value + size.width / 2) / size.width,
+              ) *
+              (pi / 180);
 
-            return Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Positioned(
-                  top: size.height * 0.1,
-                  child: Transform.scale(
-                    scale: min(
-                      scale.transform(
-                        (position.value.abs() + size.width / 2) / size.width,
-                      ),
-                      1.0,
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Positioned(
+                top: size.height * 0.1,
+                child: Transform.scale(
+                  scale: min(
+                    scale.transform(
+                      (position.value.abs() + size.width / 2) / size.width,
                     ),
-                    child: Card(
-                      index: index.value == maxIndex ? 0 : index.value + 1,
-                    ),
+                    1.0,
+                  ),
+                  child: Card(
+                    index: index.value == maxIndex ? 0 : index.value + 1,
                   ),
                 ),
-                Positioned(
-                  top: size.height * 0.1,
-                  child: GestureDetector(
-                    onHorizontalDragUpdate: onDragUpdate,
-                    onHorizontalDragEnd: onDragEnd,
-                    child: Transform.translate(
-                      offset: Offset(position.value, 0),
-                      child: Transform.rotate(
-                          angle: angle, child: Card(index: index.value)),
-                    ),
+              ),
+              Positioned(
+                top: size.height * 0.1,
+                child: GestureDetector(
+                  onHorizontalDragUpdate: onDragUpdate,
+                  onHorizontalDragEnd: onDragEnd,
+                  child: Transform.translate(
+                    offset: Offset(position.value, 0),
+                    child: Transform.rotate(
+                        angle: angle, child: Card(index: index.value)),
                   ),
                 ),
-              ],
-            );
-          }),
+              ),
+              // Check/Cancel buttons on the bottom
+              Positioned(
+                bottom: 100,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 32,
+                  children: [
+                    SwipeButton(
+                      text: "Cancel",
+                      onPressed: swipeLeft,
+                      icon: Icons.close_rounded,
+                      colorscheme: Colors.red,
+                    ),
+                    SwipeButton(
+                      text: "Check",
+                      onPressed: swipeRight,
+                      icon: Icons.check_rounded,
+                      colorscheme: Colors.green,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -141,6 +182,52 @@ class Card extends StatelessWidget {
             "assets/covers/$index.png",
             fit: BoxFit.cover,
           )),
+    );
+  }
+}
+
+class SwipeButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final Color colorscheme;
+
+  const SwipeButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.icon,
+    this.colorscheme = Colors.green,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(
+            color: Colors.white,
+            width: 4,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: SizedBox(
+          width: 80,
+          height: 80,
+          child: Center(
+            child: Icon(icon, color: colorscheme, size: 52),
+          ),
+        ),
+      ),
     );
   }
 }
