@@ -47,21 +47,20 @@ class SwipingCardsScreen extends HookWidget {
       // When the card is dragged to the left or right almost to the end,
       // animate the card to disappear
       if (position.value.abs() > bound) {
+        final factor = position.value > 0 ? 1 : -1;
         position
             .animateTo(
-              position.value > 0 ? dropzone : -dropzone,
+              factor * dropzone,
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeOut,
             )
             .whenComplete(whenDragComplete);
       } else {
-        position
-            .animateTo(
-              0,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOut,
-            )
-            .whenComplete(whenDragComplete);
+        position.animateTo(
+          0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
       }
     }
 
@@ -89,8 +88,11 @@ class SwipingCardsScreen extends HookWidget {
                 Positioned(
                   top: size.height * 0.1,
                   child: Transform.scale(
-                    scale: scale.transform(
-                      (position.value.abs() + size.width / 2) / size.width,
+                    scale: min(
+                      scale.transform(
+                        (position.value.abs() + size.width / 2) / size.width,
+                      ),
+                      1.0,
                     ),
                     child: Card(
                       index: index.value == maxIndex ? 0 : index.value + 1,
