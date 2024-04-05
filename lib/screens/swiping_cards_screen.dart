@@ -10,6 +10,8 @@ class SwipingCardsScreen extends HookWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     late final dropzone = size.width + 100;
+    final index = useState<int>(0);
+    final maxIndex = 6;
 
     final tickerProvider = useSingleTickerProvider();
     final position = useAnimationController(
@@ -30,23 +32,36 @@ class SwipingCardsScreen extends HookWidget {
       position.value += details.delta.dx;
     }
 
+    void whenDragComplete() {
+      position.value = 0;
+      if (index.value == maxIndex) {
+        index.value = 0;
+      } else {
+        index.value += 1;
+      }
+    }
+
     void onDragEnd(DragEndDetails details) {
       final bound = size.width - 150;
 
       // When the card is dragged to the left or right almost to the end,
       // animate the card to disappear
       if (position.value.abs() > bound) {
-        position.animateTo(
-          position.value > 0 ? dropzone : -dropzone,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOut,
-        );
+        position
+            .animateTo(
+              position.value > 0 ? dropzone : -dropzone,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+            )
+            .whenComplete(whenDragComplete);
       } else {
-        position.animateTo(
-          0,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOut,
-        );
+        position
+            .animateTo(
+              0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+            )
+            .whenComplete(whenDragComplete);
       }
     }
 
@@ -77,13 +92,8 @@ class SwipingCardsScreen extends HookWidget {
                     scale: scale.transform(
                       (position.value.abs() + size.width / 2) / size.width,
                     ),
-                    child: Material(
-                      elevation: 10,
-                      child: SizedBox(
-                        width: size.width * 0.8,
-                        height: size.height * 0.6,
-                        child: Container(color: Colors.blue),
-                      ),
+                    child: Card(
+                      index: index.value == maxIndex ? 0 : index.value + 1,
                     ),
                   ),
                 ),
@@ -95,22 +105,40 @@ class SwipingCardsScreen extends HookWidget {
                     child: Transform.translate(
                       offset: Offset(position.value, 0),
                       child: Transform.rotate(
-                        angle: angle,
-                        child: Material(
-                          elevation: 10,
-                          child: SizedBox(
-                            width: size.width * 0.8,
-                            height: size.height * 0.6,
-                            child: Container(color: Colors.red),
-                          ),
-                        ),
-                      ),
+                          angle: angle, child: Card(index: index.value)),
                     ),
                   ),
                 ),
               ],
             );
           }),
+    );
+  }
+}
+
+class Card extends StatelessWidget {
+  final int index;
+
+  const Card({
+    super.key,
+    required this.index,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Material(
+      elevation: 10,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.hardEdge,
+      child: SizedBox(
+          width: size.width * 0.8,
+          height: size.height * 0.5,
+          child: Image.asset(
+            "assets/covers/$index.png",
+            fit: BoxFit.cover,
+          )),
     );
   }
 }
