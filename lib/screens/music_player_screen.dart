@@ -8,7 +8,7 @@ class MusicPlayerScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    const maxIndex = 6;
+    const maxIndex = 5;
 
     final pageController = usePageController(viewportFraction: 0.8);
     final currentPage = useState(0);
@@ -37,7 +37,7 @@ class MusicPlayerScreen extends HookWidget {
               key: ValueKey(currentPage.value),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/covers/${currentPage.value}.png"),
+                  image: AssetImage("assets/ost/${currentPage.value + 1}.jpg"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -82,7 +82,8 @@ class MusicPlayerScreen extends HookWidget {
                                 ),
                               ],
                               image: DecorationImage(
-                                image: AssetImage("assets/covers/$index.png"),
+                                image:
+                                    AssetImage("assets/ost/${index + 1}.jpg"),
                                 fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
                               ),
