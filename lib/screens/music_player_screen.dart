@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animations/screens/music_player_detail_screen.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class MusicPlayerScreen extends HookWidget {
@@ -22,6 +23,15 @@ class MusicPlayerScreen extends HookWidget {
 
     void handlePageChange(int newPage) {
       currentPage.value = newPage;
+    }
+
+    void handleTap(int index) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MusicPlayerDetailScreen(index: index),
+        ),
+      );
     }
 
     return Scaffold(
@@ -67,25 +77,31 @@ class MusicPlayerScreen extends HookWidget {
                         final diff = (scrollValue - index).abs();
                         final scale = 1 - (diff * 0.1);
 
-                        return Transform.scale(
-                          scale: scale,
-                          child: Container(
-                            height: 350,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                  offset: const Offset(0, 8),
+                        return GestureDetector(
+                          onTap: () => handleTap(index + 1),
+                          child: Hero(
+                            tag: "${index + 1}",
+                            child: Transform.scale(
+                              scale: scale,
+                              child: Container(
+                                height: 350,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 10,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/ost/${index + 1}.jpg"),
+                                    fit: BoxFit.cover,
+                                    alignment: Alignment.topCenter,
+                                  ),
                                 ),
-                              ],
-                              image: DecorationImage(
-                                image:
-                                    AssetImage("assets/ost/${index + 1}.jpg"),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.topCenter,
                               ),
                             ),
                           ),
