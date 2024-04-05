@@ -79,12 +79,18 @@ class SwipingCardsScreen extends HookWidget {
           .whenComplete(whenDragComplete);
     }
 
-    void swipeLeft() {
-      swipe(isLeft: true);
-    }
+    // Scale the button when the card is dragged
+    // Button should be scaled only when the swipe direction is the same as the button
+    double buttonScale(double position, {required bool isLeft}) {
+      final scaleValue = 1 + position.abs() / (size.width * 3);
 
-    void swipeRight() {
-      swipe(isLeft: false);
+      if (isLeft && position < 0) {
+        return scaleValue;
+      } else if (!isLeft && position > 0) {
+        return scaleValue;
+      }
+
+      return 1;
     }
 
     return Scaffold(
@@ -125,7 +131,9 @@ class SwipingCardsScreen extends HookWidget {
                   child: Transform.translate(
                     offset: Offset(position.value, 0),
                     child: Transform.rotate(
-                        angle: angle, child: Card(index: index.value)),
+                      angle: angle,
+                      child: Card(index: index.value),
+                    ),
                   ),
                 ),
               ),
@@ -137,16 +145,16 @@ class SwipingCardsScreen extends HookWidget {
                   spacing: 32,
                   children: [
                     SwipeButton(
-                      text: "Cancel",
-                      onPressed: swipeLeft,
                       icon: Icons.close_rounded,
                       colorscheme: Colors.red,
+                      scale: buttonScale(position.value, isLeft: true),
+                      onPressed: () => swipe(isLeft: true),
                     ),
                     SwipeButton(
-                      text: "Check",
-                      onPressed: swipeRight,
                       icon: Icons.check_rounded,
                       colorscheme: Colors.green,
+                      scale: buttonScale(position.value, isLeft: false),
+                      onPressed: () => swipe(isLeft: false),
                     ),
                   ],
                 ),
@@ -161,7 +169,6 @@ class SwipingCardsScreen extends HookWidget {
 
 class Card extends StatelessWidget {
   final int index;
-
   const Card({
     super.key,
     required this.index,
@@ -187,44 +194,53 @@ class Card extends StatelessWidget {
 }
 
 class SwipeButton extends StatelessWidget {
-  final String text;
   final VoidCallback onPressed;
   final IconData icon;
   final Color colorscheme;
+  final double scale;
 
   const SwipeButton({
     super.key,
-    required this.text,
     required this.onPressed,
     required this.icon,
+    required this.scale,
     this.colorscheme = Colors.green,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(
-            color: Colors.white,
-            width: 4,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+    return Transform.scale(
+      scale: scale,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            //  Color should tween between the colorscheme and white
+            color: scale == 1 ? Colors.white : colorscheme,
+            borderRadius: BorderRadius.circular(50),
+            border: Border.all(
+              color: Colors.white,
+              width: 4,
             ),
-          ],
-        ),
-        child: SizedBox(
-          width: 80,
-          height: 80,
-          child: Center(
-            child: Icon(icon, color: colorscheme, size: 52),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: SizedBox(
+            width: 60,
+            height: 60,
+            child: Center(
+              child: Icon(
+                icon,
+                color: scale == 1 ? colorscheme : Colors.white,
+                size: 40,
+              ),
+            ),
           ),
         ),
       ),
