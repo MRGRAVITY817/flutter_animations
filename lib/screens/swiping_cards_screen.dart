@@ -50,6 +50,11 @@ class SwipingCardsScreen extends HookWidget {
       }
     }
 
+    late final Tween<double> scale = Tween<double>(
+      begin: 0.8,
+      end: 1,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Swiping Cards"),
@@ -66,6 +71,22 @@ class SwipingCardsScreen extends HookWidget {
             return Stack(
               alignment: Alignment.topCenter,
               children: [
+                Positioned(
+                  top: size.height * 0.1,
+                  child: Transform.scale(
+                    scale: scale.transform(
+                      (position.value.abs() + size.width / 2) / size.width,
+                    ),
+                    child: Material(
+                      elevation: 10,
+                      child: SizedBox(
+                        width: size.width * 0.8,
+                        height: size.height * 0.6,
+                        child: Container(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                ),
                 Positioned(
                   top: size.height * 0.1,
                   child: GestureDetector(
