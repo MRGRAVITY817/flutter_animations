@@ -9,6 +9,7 @@ class SwipingCardsScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    late final dropzone = size.width + 100;
 
     final tickerProvider = useSingleTickerProvider();
     final position = useAnimationController(
@@ -16,8 +17,8 @@ class SwipingCardsScreen extends HookWidget {
       duration: const Duration(milliseconds: 500),
       // Since animation controller limits the bound between 0 and 1 by default,
       // we need to set the lower and upper bounds to the screen width
-      lowerBound: -size.width,
-      upperBound: size.width,
+      lowerBound: -dropzone,
+      upperBound: dropzone,
     );
 
     late final Tween<double> rotation = Tween<double>(
@@ -30,11 +31,23 @@ class SwipingCardsScreen extends HookWidget {
     }
 
     void onDragEnd(DragEndDetails details) {
-      position.animateTo(
-        0,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
+      final bound = size.width - 150;
+
+      // When the card is dragged to the left or right almost to the end,
+      // animate the card to disappear
+      if (position.value.abs() > bound) {
+        position.animateTo(
+          position.value > 0 ? dropzone : -dropzone,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
+      } else {
+        position.animateTo(
+          0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
+      }
     }
 
     return Scaffold(
@@ -51,9 +64,10 @@ class SwipingCardsScreen extends HookWidget {
                 (pi / 180);
 
             return Stack(
+              alignment: Alignment.topCenter,
               children: [
-                Align(
-                  alignment: Alignment.topCenter,
+                Positioned(
+                  top: size.height * 0.1,
                   child: GestureDetector(
                     onHorizontalDragUpdate: onDragUpdate,
                     onHorizontalDragEnd: onDragEnd,
