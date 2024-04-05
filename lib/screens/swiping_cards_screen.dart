@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -9,7 +11,7 @@ class SwipingCardsScreen extends HookWidget {
     final size = MediaQuery.of(context).size;
 
     final tickerProvider = useSingleTickerProvider();
-    final controller = useAnimationController(
+    final position = useAnimationController(
       vsync: tickerProvider,
       duration: const Duration(milliseconds: 500),
       // Since animation controller limits the bound between 0 and 1 by default,
@@ -18,15 +20,20 @@ class SwipingCardsScreen extends HookWidget {
       upperBound: size.width,
     );
 
+    late final Tween<double> rotation = Tween<double>(
+      begin: -15,
+      end: 15,
+    );
+
     void onDragUpdate(DragUpdateDetails details) {
-      controller.value += details.delta.dx;
+      position.value += details.delta.dx;
     }
 
     void onDragEnd(DragEndDetails details) {
-      controller.animateTo(
+      position.animateTo(
         0,
         duration: const Duration(milliseconds: 500),
-        curve: Curves.bounceOut,
+        curve: Curves.easeOut,
       );
     }
 
@@ -35,8 +42,14 @@ class SwipingCardsScreen extends HookWidget {
         title: const Text("Swiping Cards"),
       ),
       body: AnimatedBuilder(
-          animation: controller,
+          animation: position,
           builder: (context, child) {
+            final angle = rotation.transform(
+                  // Start from the center of the screen
+                  (position.value + size.width / 2) / size.width,
+                ) *
+                (pi / 180);
+
             return Stack(
               children: [
                 Align(
@@ -45,13 +58,16 @@ class SwipingCardsScreen extends HookWidget {
                     onHorizontalDragUpdate: onDragUpdate,
                     onHorizontalDragEnd: onDragEnd,
                     child: Transform.translate(
-                      offset: Offset(controller.value, 0),
-                      child: Material(
-                        elevation: 10,
-                        child: SizedBox(
-                          width: size.width * 0.8,
-                          height: size.height * 0.8,
-                          child: Container(color: Colors.red),
+                      offset: Offset(position.value, 0),
+                      child: Transform.rotate(
+                        angle: angle,
+                        child: Material(
+                          elevation: 10,
+                          child: SizedBox(
+                            width: size.width * 0.8,
+                            height: size.height * 0.6,
+                            child: Container(color: Colors.red),
+                          ),
                         ),
                       ),
                     ),
