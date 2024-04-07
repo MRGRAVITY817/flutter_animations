@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:lottie/lottie.dart';
 
 class MusicPlayerDetailScreen extends HookWidget {
   final int index;
@@ -162,10 +163,26 @@ class MusicPlayerDetailScreen extends HookWidget {
           ),
           GestureDetector(
             onTap: onPlayPauseTap,
-            child: AnimatedIcon(
-              icon: AnimatedIcons.pause_play,
-              progress: playPauseController,
-              size: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedIcon(
+                  icon: AnimatedIcons.pause_play,
+                  progress: playPauseController,
+                  size: 60,
+                ),
+                // LottieBuilder.asset(
+                //   "assets/animations/play-pause.json",
+                //   controller: playPauseController,
+                //   onLoaded: (composition) {
+                //     // If you want to use duration that your lottie widget is meant to follow,
+                //     // allocate composition.duration to playPauseController.duration.
+                //     playPauseController.duration = composition.duration;
+                //   },
+                //   width: 200,
+                //   height: 200,
+                // ),
+              ],
             ),
           )
         ],
