@@ -12,15 +12,14 @@ class MusicPlayerDetailScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final tickerProvider = useSingleTickerProvider();
-    late final progressController = useAnimationController(
-      vsync: tickerProvider,
+
+    // Progress related stuffs
+    final progressController = useAnimationController(
       duration: const Duration(minutes: 1),
-    );
+    )..repeat(reverse: true);
 
     String formatTime(double value) {
       final durationFromValue = Duration(seconds: (value * 60).toInt());
-      // Format duration to MM:SS
       return '${durationFromValue.inMinutes.remainder(60).toString().padLeft(2, '0')}:${durationFromValue.inSeconds.remainder(60).toString().padLeft(2, '0')}';
     }
 
@@ -30,11 +29,15 @@ class MusicPlayerDetailScreen extends HookWidget {
       progress.value = progressController.value;
     });
 
-    useEffect(() {
-      progressController.repeat(reverse: true);
+    // Marquee related stuffs
+    final marqueeController = useAnimationController(
+      duration: const Duration(seconds: 20),
+    )..repeat(reverse: true);
 
-      return null;
-    }, [progressController]);
+    late final Animation<Offset> marqueeTween = Tween(
+      begin: const Offset(0.1, 0),
+      end: const Offset(-0.6, 0),
+    ).animate(marqueeController);
 
     return Scaffold(
       appBar: AppBar(
@@ -128,11 +131,15 @@ class MusicPlayerDetailScreen extends HookWidget {
           const SizedBox(
             height: 5,
           ),
-          const Text(
-            "A Film By Christopher Nolan - Original Motion Picture Soundtrack",
-            maxLines: 1,
-            overflow: TextOverflow.visible,
-            style: TextStyle(fontSize: 18),
+          SlideTransition(
+            position: marqueeTween,
+            child: const Text(
+              "A Film By Christopher Nolan - Original Motion Picture Soundtrack",
+              maxLines: 1,
+              overflow: TextOverflow.visible,
+              style: TextStyle(fontSize: 18),
+              softWrap: false,
+            ),
           ),
         ],
       ),
