@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:lottie/lottie.dart';
 
 class MusicPlayerDetailScreen extends HookWidget {
   final int index;
@@ -184,7 +183,20 @@ class MusicPlayerDetailScreen extends HookWidget {
                 // ),
               ],
             ),
-          )
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: CustomPaint(
+              size: Size(size.width - 80, 20),
+              painter: VolumeBarPaint(),
+            ),
+          ),
         ],
       ),
     );
@@ -244,5 +256,33 @@ class ProgressBar extends CustomPainter {
   @override
   bool shouldRepaint(covariant ProgressBar oldDelegate) {
     return oldDelegate.progressValue != progressValue;
+  }
+}
+
+class VolumeBarPaint extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bgPaint = Paint()..color = Colors.grey.shade300;
+
+    final bgRect = Rect.fromLTWH(0, 0, size.width, size.height);
+
+    canvas.drawRect(bgRect, bgPaint);
+
+    final volumePaint = Paint()..color = Colors.grey.shade500;
+
+    final volumeRect = Rect.fromLTWH(
+      0,
+      0,
+      size.width * 0.5,
+      size.height,
+    );
+
+    canvas.drawRect(volumeRect, volumePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    // TODO: implement shouldRepaint
+    throw UnimplementedError();
   }
 }
