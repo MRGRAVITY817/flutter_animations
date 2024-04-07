@@ -55,6 +55,21 @@ class MusicPlayerDetailScreen extends HookWidget {
       }
     }
 
+    final dragging = useState(false);
+
+    final volumeBarMaxWidth = size.width - 80;
+
+    toggleDragging() {
+      dragging.value = !dragging.value;
+    }
+
+    final volume = useValueNotifier<double>(0);
+
+    onVolumeDragUpdate(DragUpdateDetails details) {
+      volume.value += details.delta.dx;
+      volume.value = volume.value.clamp(0.0, volumeBarMaxWidth);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Interstellar"),
@@ -187,14 +202,29 @@ class MusicPlayerDetailScreen extends HookWidget {
           const SizedBox(
             height: 30,
           ),
-          Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: CustomPaint(
-              size: Size(size.width - 80, 20),
-              painter: VolumeBarPaint(),
+          GestureDetector(
+            onHorizontalDragStart: (_) => toggleDragging(),
+            onHorizontalDragEnd: (_) => toggleDragging(),
+            onHorizontalDragUpdate: onVolumeDragUpdate,
+            child: AnimatedScale(
+              scale: dragging.value ? 1.1 : 1,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.bounceOut,
+              child: Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ValueListenableBuilder(
+                  valueListenable: volume,
+                  builder: (context, value, child) {
+                    return CustomPaint(
+                      size: Size(size.width - 80, 20),
+                      painter: VolumeBarPaint(volume: value),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         ],
@@ -260,8 +290,16 @@ class ProgressBar extends CustomPainter {
 }
 
 class VolumeBarPaint extends CustomPainter {
+  final double volume;
+
+  VolumeBarPaint({
+    required this.volume,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
+    final progress = volume;
+
     final bgPaint = Paint()..color = Colors.grey.shade300;
 
     final bgRect = Rect.fromLTWH(0, 0, size.width, size.height);
@@ -273,7 +311,7 @@ class VolumeBarPaint extends CustomPainter {
     final volumeRect = Rect.fromLTWH(
       0,
       0,
-      size.width * 0.5,
+      progress,
       size.height,
     );
 
@@ -281,8 +319,7 @@ class VolumeBarPaint extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
-    throw UnimplementedError();
+  bool shouldRepaint(covariant VolumeBarPaint oldDelegate) {
+    return oldDelegate.volume != volume;
   }
 }
