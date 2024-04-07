@@ -24,7 +24,7 @@ class MusicPlayerDetailScreen extends HookWidget {
       return '${durationFromValue.inMinutes.remainder(60).toString().padLeft(2, '0')}:${durationFromValue.inSeconds.remainder(60).toString().padLeft(2, '0')}';
     }
 
-    final progress = useState<double>(0.0);
+    final progress = useValueNotifier(0.0);
 
     progressController.addListener(() {
       progress.value = progressController.value;
@@ -88,26 +88,31 @@ class MusicPlayerDetailScreen extends HookWidget {
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Row(
-              children: [
-                Text(
-                  formatTime(progress.value),
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  formatTime(1 - progress.value),
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            child: ValueListenableBuilder(
+              valueListenable: progress,
+              builder: (context, value, child) {
+                return Row(
+                  children: [
+                    Text(
+                      formatTime(value),
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      formatTime(1 - value),
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           const SizedBox(

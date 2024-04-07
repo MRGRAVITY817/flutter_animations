@@ -13,7 +13,7 @@ class MusicPlayerScreen extends HookWidget {
 
     final pageController = usePageController(viewportFraction: 0.8);
     final currentPage = useState(0);
-    final scroll = useState(0.0);
+    final scroll = useValueNotifier(0.0);
 
     pageController.addListener(() {
       if (pageController.page == null) return;
