@@ -13,12 +13,28 @@ class MusicPlayerDetailScreen extends HookWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final tickerProvider = useSingleTickerProvider();
-    final progressController = useAnimationController(
+    late final progressController = useAnimationController(
       vsync: tickerProvider,
       duration: const Duration(minutes: 1),
     );
 
-    progressController.repeat(reverse: true);
+    String formatTime(double value) {
+      final durationFromValue = Duration(seconds: (value * 60).toInt());
+      // Format duration to MM:SS
+      return '${durationFromValue.inMinutes.remainder(60).toString().padLeft(2, '0')}:${durationFromValue.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+    }
+
+    final progress = useState<double>(0.0);
+
+    progressController.addListener(() {
+      progress.value = progressController.value;
+    });
+
+    useEffect(() {
+      progressController.repeat(reverse: true);
+
+      return null;
+    }, [progressController]);
 
     return Scaffold(
       appBar: AppBar(
@@ -68,6 +84,50 @@ class MusicPlayerDetailScreen extends HookWidget {
                 ),
               );
             },
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Row(
+              children: [
+                Text(
+                  formatTime(progress.value),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  formatTime(1 - progress.value),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text(
+            "Interstellar",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          const Text(
+            "A Film By Christopher Nolan - Original Motion Picture Soundtrack",
+            maxLines: 1,
+            overflow: TextOverflow.visible,
+            style: TextStyle(fontSize: 18),
           ),
         ],
       ),
