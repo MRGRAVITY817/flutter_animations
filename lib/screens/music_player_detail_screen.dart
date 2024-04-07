@@ -39,6 +39,22 @@ class MusicPlayerDetailScreen extends HookWidget {
       end: const Offset(-0.6, 0),
     ).animate(marqueeController);
 
+    // Play Pause related stuffs
+
+    final playPauseController = useAnimationController(
+      duration: const Duration(
+        milliseconds: 500,
+      ),
+    );
+
+    onPlayPauseTap() {
+      if (playPauseController.isCompleted) {
+        playPauseController.reverse();
+      } else {
+        playPauseController.forward();
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Interstellar"),
@@ -141,6 +157,17 @@ class MusicPlayerDetailScreen extends HookWidget {
               softWrap: false,
             ),
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          GestureDetector(
+            onTap: onPlayPauseTap,
+            child: AnimatedIcon(
+              icon: AnimatedIcons.pause_play,
+              progress: playPauseController,
+              size: 60,
+            ),
+          )
         ],
       ),
     );
