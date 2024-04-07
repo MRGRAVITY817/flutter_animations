@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class MusicPlayerDetailScreen extends StatelessWidget {
+class MusicPlayerDetailScreen extends HookWidget {
   final int index;
+
   const MusicPlayerDetailScreen({
     super.key,
     required this.index,
@@ -10,6 +12,14 @@ class MusicPlayerDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final tickerProvider = useSingleTickerProvider();
+    final progressController = useAnimationController(
+      vsync: tickerProvider,
+      duration: const Duration(minutes: 1),
+    );
+
+    progressController.repeat(reverse: true);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Interstellar"),
@@ -48,11 +58,16 @@ class MusicPlayerDetailScreen extends StatelessWidget {
           const SizedBox(
             height: 50,
           ),
-          CustomPaint(
-            size: Size(size.width - 80, 5),
-            painter: const ProgressBar(
-              progressValue: 180,
-            ),
+          AnimatedBuilder(
+            animation: progressController,
+            builder: (context, _) {
+              return CustomPaint(
+                size: Size(size.width - 80, 5),
+                painter: ProgressBar(
+                  progressValue: progressController.value,
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -69,6 +84,8 @@ class ProgressBar extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final progress = size.width * progressValue;
+
     // Track
     final trackPaint = Paint()
       ..color = Colors.grey.shade300
@@ -93,7 +110,7 @@ class ProgressBar extends CustomPainter {
     final progressRRect = RRect.fromLTRBR(
       0,
       0,
-      size.width * 0.5,
+      progress,
       size.height,
       const Radius.circular(10),
     );
@@ -102,14 +119,14 @@ class ProgressBar extends CustomPainter {
 
     // Thumb
     canvas.drawCircle(
-      Offset(size.width * 0.5, size.height * 0.5),
+      Offset(progress, size.height * 0.5),
       10,
       progressPaint,
     );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(covariant ProgressBar oldDelegate) {
+    return oldDelegate.progressValue != progressValue;
   }
 }
