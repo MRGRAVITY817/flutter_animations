@@ -28,8 +28,20 @@ class MusicPlayerScreen extends HookWidget {
     void handleTap(int index) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => MusicPlayerDetailScreen(index: index),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (
+            context,
+            animation,
+            secondaryAnimation,
+          ) {
+            return FadeTransition(
+              opacity: animation,
+              child: MusicPlayerDetailScreen(
+                index: index,
+              ),
+            );
+          },
         ),
       );
     }
