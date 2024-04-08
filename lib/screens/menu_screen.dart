@@ -11,6 +11,7 @@ import 'package:flutter_animations/screens/rive_rotating_button_screen.dart';
 import 'package:flutter_animations/screens/rive_stars_screen.dart';
 import 'package:flutter_animations/screens/shared_axis_screen.dart';
 import 'package:flutter_animations/screens/swiping_cards_screen.dart';
+import 'package:flutter_animations/screens/wallet_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -98,6 +99,10 @@ class MenuScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => goToPage(const FadeThroughScreen()),
               child: const Text("Fade Through"),
+            ),
+            ElevatedButton(
+              onPressed: () => goToPage(const WalletScreen()),
+              child: const Text("Wallet"),
             ),
           ],
         ),
