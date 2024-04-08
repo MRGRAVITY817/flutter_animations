@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 
-class RiveScreen extends StatefulWidget {
-  const RiveScreen({super.key});
+class RiveRotatingButtonScreen extends StatefulWidget {
+  const RiveRotatingButtonScreen({super.key});
 
   @override
-  State<RiveScreen> createState() => _RiveScreenState();
+  State<RiveRotatingButtonScreen> createState() =>
+      _RiveRotatingButtonScreenState();
 }
 
-class _RiveScreenState extends State<RiveScreen> {
+class _RiveRotatingButtonScreenState extends State<RiveRotatingButtonScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -20,7 +21,7 @@ class _RiveScreenState extends State<RiveScreen> {
           ),
           Center(
             child: Text(
-              "Login",
+              "Hold Press",
               style: TextStyle(
                 fontSize: 28,
                 color: Colors.white,

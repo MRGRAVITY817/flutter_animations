@@ -3,7 +3,10 @@ import 'package:flutter_animations/screens/apple_watch_screen.dart';
 import 'package:flutter_animations/screens/explicit_animations_screen.dart';
 import 'package:flutter_animations/screens/implicit_animations_screen.dart';
 import 'package:flutter_animations/screens/music_player_screen.dart';
-import 'package:flutter_animations/screens/rive_screen.dart';
+import 'package:flutter_animations/screens/rive_blurred_balls_screen.dart';
+import 'package:flutter_animations/screens/rive_old_man_screen.dart';
+import 'package:flutter_animations/screens/rive_rotating_button_screen.dart';
+import 'package:flutter_animations/screens/rive_stars_screen.dart';
 import 'package:flutter_animations/screens/swiping_cards_screen.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -51,10 +54,36 @@ class MenuScreen extends StatelessWidget {
               onPressed: () => goToPage(const MusicPlayerScreen()),
               child: const Text("Music Player"),
             ),
-            ElevatedButton(
-              onPressed: () => goToPage(const RiveScreen()),
-              child: const Text("Rive Animations"),
-            )
+            Wrap(
+              direction: Axis.horizontal,
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              children: [
+                ElevatedButton(
+                  onPressed: () => goToPage(const RiveOldManScreen()),
+                  child: const Text("Rive - Old man"),
+                ),
+                ElevatedButton(
+                  onPressed: () => goToPage(const RiveStarsScreen()),
+                  child: const Text("Rive - Stars"),
+                ),
+              ],
+            ),
+            Wrap(
+              direction: Axis.horizontal,
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              children: [
+                ElevatedButton(
+                  onPressed: () => goToPage(const RiveBlurredBallsScreen()),
+                  child: const Text("Rive - Balls"),
+                ),
+                ElevatedButton(
+                  onPressed: () => goToPage(const RiveRotatingButtonScreen()),
+                  child: const Text("Rive - Button"),
+                ),
+              ],
+            ),
           ],
         ),
       ),
