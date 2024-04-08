@@ -11,26 +11,27 @@ class WalletScreen extends StatelessWidget {
         title: const Text("Wallet"),
       ),
       body: Center(
-        child: Animate(
-          effects: [
-            FadeEffect(
-              begin: 0.0,
-              end: 1.0,
-              duration: 1.seconds,
-              curve: Curves.easeIn,
-            ),
-            ScaleEffect(
+        child: const Text(
+          "Hello!",
+          style: TextStyle(fontSize: 66),
+        )
+            .animate()
+            .fadeIn(
+              begin: 0,
+              duration: 1000.ms,
+            )
+            .scale(
               alignment: Alignment.center,
               begin: Offset.zero,
-              end: const Offset(1, 1),
               duration: 1.seconds,
+              end: const Offset(1, 1),
             )
-          ],
-          child: const Text(
-            "Hello!",
-            style: TextStyle(fontSize: 66),
-          ),
-        ),
+            .then(delay: 500.ms)
+            .slideX(
+              begin: 0,
+              end: -10,
+              duration: 2.seconds,
+            ),
       ),
     );
   }
