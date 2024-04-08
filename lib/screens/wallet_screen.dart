@@ -29,20 +29,29 @@ class WalletScreen extends HookWidget {
           onTap: onExpand,
           child: Column(
             children: [
-              const CreditCard(bgColor: Colors.purple)
+              CreditCard(
+                bgColor: Colors.purple,
+                isExpanded: expanded.value,
+              )
                   .animate(
                     delay: 750.ms,
                     target: expanded.value ? 0 : 1,
                   )
                   .flipV(end: 0.1),
-              const CreditCard(bgColor: Colors.black)
+              CreditCard(
+                bgColor: Colors.black,
+                isExpanded: expanded.value,
+              )
                   .animate(
                     delay: 850.ms,
                     target: expanded.value ? 0 : 1,
                   )
                   .flipV(end: 0.1)
                   .slideY(end: -0.8),
-              const CreditCard(bgColor: Colors.blue)
+              CreditCard(
+                bgColor: Colors.blue,
+                isExpanded: expanded.value,
+              )
                   .animate(
                     delay: 950.ms,
                     target: expanded.value ? 0 : 1,
