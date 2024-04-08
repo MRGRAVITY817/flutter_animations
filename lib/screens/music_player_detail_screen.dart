@@ -74,10 +74,10 @@ class MusicPlayerDetailScreen extends HookWidget {
     // Menu
 
     final menuController = useAnimationController(
-      duration: const Duration(milliseconds: 750),
+      duration: const Duration(seconds: 1),
     );
 
-    const menuCurve = Curves.easeInOutCubic;
+    const menuCurve = Curves.easeInOut;
 
     late final Animation<double> screenScale = Tween(
       begin: 1.0,
@@ -85,7 +85,7 @@ class MusicPlayerDetailScreen extends HookWidget {
     ).animate(
       CurvedAnimation(
         parent: menuController,
-        curve: const Interval(0.0, 0.5, curve: menuCurve),
+        curve: const Interval(0.2, 0.4, curve: menuCurve),
       ),
     );
 
@@ -96,6 +96,16 @@ class MusicPlayerDetailScreen extends HookWidget {
       CurvedAnimation(
         parent: menuController,
         curve: const Interval(0.5, 1.0, curve: menuCurve),
+      ),
+    );
+
+    late final closeButtonOpacity = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: menuController,
+        curve: const Interval(0.3, 0.5, curve: menuCurve),
       ),
     );
 
@@ -126,9 +136,12 @@ class MusicPlayerDetailScreen extends HookWidget {
       children: [
         Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: closeMenu,
+            leading: FadeTransition(
+              opacity: closeButtonOpacity,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: closeMenu,
+              ),
             ),
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
