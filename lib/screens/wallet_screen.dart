@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_animations/screens/credit_card.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -10,29 +10,15 @@ class WalletScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Wallet"),
       ),
-      body: Center(
-        child: const Text(
-          "Hello!",
-          style: TextStyle(fontSize: 66),
-        )
-            .animate()
-            .fadeIn(
-              begin: 0,
-              duration: 1000.ms,
-            )
-            .scale(
-              alignment: Alignment.center,
-              begin: Offset.zero,
-              duration: 1.seconds,
-              end: const Offset(1, 1),
-            )
-            .then(delay: 500.ms)
-            .slideX(
-              begin: 0,
-              end: -10,
-              duration: 2.seconds,
-            ),
-      ),
+      body: const Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              CreditCard(bgColor: Colors.purple),
+              CreditCard(bgColor: Colors.black),
+              CreditCard(bgColor: Colors.blue),
+            ],
+          )),
     );
   }
 }
