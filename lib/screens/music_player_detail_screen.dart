@@ -109,6 +109,16 @@ class MusicPlayerDetailScreen extends HookWidget {
       ),
     );
 
+    late final profileSlide = Tween<Offset>(
+      begin: const Offset(-1, 0),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: menuController,
+        curve: const Interval(0.4, 0.7, curve: menuCurve),
+      ),
+    );
+
     openMenu() {
       menuController.forward();
     }
@@ -157,18 +167,21 @@ class MusicPlayerDetailScreen extends HookWidget {
                   height: 20,
                 ),
                 for (final menuItem in menuItems) ...[
-                  Row(
-                    children: [
-                      Icon(menuItem["icon"], color: Colors.grey.shade200),
-                      const SizedBox(width: 10),
-                      Text(
-                        menuItem["text"],
-                        style: TextStyle(
-                          color: Colors.grey.shade200,
-                          fontSize: 18,
-                        ),
-                      )
-                    ],
+                  SlideTransition(
+                    position: profileSlide,
+                    child: Row(
+                      children: [
+                        Icon(menuItem["icon"], color: Colors.grey.shade200),
+                        const SizedBox(width: 10),
+                        Text(
+                          menuItem["text"],
+                          style: TextStyle(
+                            color: Colors.grey.shade200,
+                            fontSize: 18,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 30),
                 ],
@@ -178,11 +191,10 @@ class MusicPlayerDetailScreen extends HookWidget {
                     Icon(Icons.logout, color: Colors.red.shade400),
                     const SizedBox(width: 10),
                     Text(
-                      "Logout",
+                      "Log Out",
                       style: TextStyle(
                         color: Colors.red.shade400,
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
                       ),
                     )
                   ],
