@@ -18,6 +18,12 @@ class WalletScreen extends HookWidget {
       expanded.value = false;
     }
 
+    final cardColors = [
+      Colors.purple,
+      Colors.blue,
+      Colors.black,
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Wallet"),
@@ -29,35 +35,20 @@ class WalletScreen extends HookWidget {
           onTap: onExpand,
           child: Column(
             children: [
-              CreditCard(
-                bgColor: Colors.purple,
-                isExpanded: expanded.value,
-              )
-                  .animate(
-                    delay: 750.ms,
-                    target: expanded.value ? 0 : 1,
+              for (final i in [0, 1, 2])
+                Hero(
+                  tag: cardColors[i],
+                  child: CreditCard(
+                    bgColor: cardColors[i],
+                    isExpanded: expanded.value,
                   )
-                  .flipV(end: 0.1),
-              CreditCard(
-                bgColor: Colors.black,
-                isExpanded: expanded.value,
-              )
-                  .animate(
-                    delay: 850.ms,
-                    target: expanded.value ? 0 : 1,
-                  )
-                  .flipV(end: 0.1)
-                  .slideY(end: -0.8),
-              CreditCard(
-                bgColor: Colors.blue,
-                isExpanded: expanded.value,
-              )
-                  .animate(
-                    delay: 950.ms,
-                    target: expanded.value ? 0 : 1,
-                  )
-                  .flipV(end: 0.1)
-                  .slideY(end: -0.8 * 2),
+                      .animate(
+                        delay: 750.ms,
+                        target: expanded.value ? 0 : 1,
+                      )
+                      .flipV(end: 0.1)
+                      .slideY(end: -0.8 * i),
+                ),
             ]
                 .animate(interval: 250.ms)
                 .fadeIn(begin: 0)
