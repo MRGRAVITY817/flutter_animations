@@ -74,168 +74,257 @@ class MusicPlayerDetailScreen extends HookWidget {
     // Menu
     void toggleMenu() {}
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Interstellar"), actions: [
-        IconButton(
-          onPressed: toggleMenu,
-          icon: const Icon(Icons.menu),
-        ),
-      ]),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 30,
+    final menuController = useAnimationController(
+      duration: const Duration(milliseconds: 500),
+    );
+
+    openMenu() {
+      menuController.forward();
+    }
+
+    closeMenu() {
+      menuController.reverse();
+    }
+
+    List<Map<String, dynamic>> menuItems = [
+      {
+        "icon": Icons.person,
+        "text": "Profile",
+      },
+      {
+        "icon": Icons.notifications,
+        "text": "Notifications",
+      },
+      {
+        "icon": Icons.settings,
+        "text": "Settings",
+      },
+    ];
+
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text("Interstellar"),
+            actions: [
+              IconButton(
+                onPressed: toggleMenu,
+                icon: const Icon(Icons.menu),
+              ),
+            ],
           ),
-          Hero(
-            tag: "$index",
-            child: Align(
-              alignment: Alignment.center,
-              child: Container(
-                height: 350,
-                width: 350,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 8),
+          body: Column(
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              Hero(
+                tag: "$index",
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: 350,
+                    width: 350,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                      image: DecorationImage(
+                        image: AssetImage("assets/ost/$index.jpg"),
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                      ),
                     ),
-                  ],
-                  image: DecorationImage(
-                    image: AssetImage("assets/ost/$index.jpg"),
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
                   ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(
-            height: 50,
-          ),
-          AnimatedBuilder(
-            animation: progressController,
-            builder: (context, _) {
-              return CustomPaint(
-                size: Size(size.width - 80, 5),
-                painter: MusicPlayerProgressBarPaint(
-                  progressValue: progressController.value,
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: ValueListenableBuilder(
-              valueListenable: progress,
-              builder: (context, value, child) {
-                return Row(
-                  children: [
-                    Text(
-                      formatTime(value),
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+              const SizedBox(
+                height: 50,
+              ),
+              AnimatedBuilder(
+                animation: progressController,
+                builder: (context, _) {
+                  return CustomPaint(
+                    size: Size(size.width - 80, 5),
+                    painter: MusicPlayerProgressBarPaint(
+                      progressValue: progressController.value,
                     ),
-                    const Spacer(),
-                    Text(
-                      formatTime(1 - value),
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Text(
-            "Interstellar",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          SlideTransition(
-            position: marqueeTween,
-            child: const Text(
-              "A Film By Christopher Nolan - Original Motion Picture Soundtrack",
-              maxLines: 1,
-              overflow: TextOverflow.visible,
-              style: TextStyle(fontSize: 18),
-              softWrap: false,
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          GestureDetector(
-            onTap: onPlayPauseTap,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedIcon(
-                  icon: AnimatedIcons.pause_play,
-                  progress: playPauseController,
-                  size: 60,
-                ),
-                // LottieBuilder.asset(
-                //   "assets/animations/play-pause.json",
-                //   controller: playPauseController,
-                //   onLoaded: (composition) {
-                //     // If you want to use duration that your lottie widget is meant to follow,
-                //     // allocate composition.duration to playPauseController.duration.
-                //     playPauseController.duration = composition.duration;
-                //   },
-                //   width: 200,
-                //   height: 200,
-                // ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          GestureDetector(
-            onHorizontalDragStart: (_) => toggleDragging(),
-            onHorizontalDragEnd: (_) => toggleDragging(),
-            onHorizontalDragUpdate: onVolumeDragUpdate,
-            child: AnimatedScale(
-              scale: dragging.value ? 1.1 : 1,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.bounceOut,
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: ValueListenableBuilder(
-                  valueListenable: volume,
+                  valueListenable: progress,
                   builder: (context, value, child) {
-                    return CustomPaint(
-                      size: Size(size.width - 80, 20),
-                      painter: MusicPlayerVolumeBarPaint(volume: value),
+                    return Row(
+                      children: [
+                        Text(
+                          formatTime(value),
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          formatTime(1 - value),
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                "Interstellar",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SlideTransition(
+                position: marqueeTween,
+                child: const Text(
+                  "A Film By Christopher Nolan - Original Motion Picture Soundtrack",
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  style: TextStyle(fontSize: 18),
+                  softWrap: false,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              GestureDetector(
+                onTap: onPlayPauseTap,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedIcon(
+                      icon: AnimatedIcons.pause_play,
+                      progress: playPauseController,
+                      size: 60,
+                    ),
+                    // LottieBuilder.asset(
+                    //   "assets/animations/play-pause.json",
+                    //   controller: playPauseController,
+                    //   onLoaded: (composition) {
+                    //     // If you want to use duration that your lottie widget is meant to follow,
+                    //     // allocate composition.duration to playPauseController.duration.
+                    //     playPauseController.duration = composition.duration;
+                    //   },
+                    //   width: 200,
+                    //   height: 200,
+                    // ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              GestureDetector(
+                onHorizontalDragStart: (_) => toggleDragging(),
+                onHorizontalDragEnd: (_) => toggleDragging(),
+                onHorizontalDragUpdate: onVolumeDragUpdate,
+                child: AnimatedScale(
+                  scale: dragging.value ? 1.1 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.bounceOut,
+                  child: Container(
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ValueListenableBuilder(
+                      valueListenable: volume,
+                      builder: (context, value, child) {
+                        return CustomPaint(
+                          size: Size(size.width - 80, 20),
+                          painter: MusicPlayerVolumeBarPaint(volume: value),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: toggleMenu,
+            ),
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+          backgroundColor: Colors.black,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+            ),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                for (final menuItem in menuItems) ...[
+                  Row(
+                    children: [
+                      Icon(menuItem["icon"], color: Colors.grey.shade200),
+                      const SizedBox(width: 10),
+                      Text(
+                        menuItem["text"],
+                        style: TextStyle(
+                          color: Colors.grey.shade200,
+                          fontSize: 18,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                ],
+                const Spacer(),
+                Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.red.shade400),
+                    const SizedBox(width: 10),
+                    Text(
+                      "Logout",
+                      style: TextStyle(
+                        color: Colors.red.shade400,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 100),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
