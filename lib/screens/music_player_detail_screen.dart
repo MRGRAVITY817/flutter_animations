@@ -74,7 +74,8 @@ class MusicPlayerDetailScreen extends HookWidget {
     // Menu
 
     final menuController = useAnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 1500),
+      reverseDuration: const Duration(milliseconds: 1000),
     );
 
     const menuCurve = Curves.easeInOut;
@@ -109,13 +110,29 @@ class MusicPlayerDetailScreen extends HookWidget {
       ),
     );
 
-    late final profileSlide = Tween<Offset>(
+    Animation<Offset> menuSlide(int index) {
+      return Tween<Offset>(
+        begin: const Offset(-1, 0),
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(
+          parent: menuController,
+          curve: Interval(
+            0.4 + 0.1 * index,
+            0.7 + 0.1 * index,
+            curve: menuCurve,
+          ),
+        ),
+      );
+    }
+
+    late final logoutSlide = Tween<Offset>(
       begin: const Offset(-1, 0),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(
         parent: menuController,
-        curve: const Interval(0.4, 0.7, curve: menuCurve),
+        curve: const Interval(0.8, 1.0, curve: menuCurve),
       ),
     );
 
@@ -131,14 +148,17 @@ class MusicPlayerDetailScreen extends HookWidget {
       {
         "icon": Icons.person,
         "text": "Profile",
+        "slide": menuSlide(0),
       },
       {
         "icon": Icons.notifications,
         "text": "Notifications",
+        "slide": menuSlide(1),
       },
       {
         "icon": Icons.settings,
         "text": "Settings",
+        "slide": menuSlide(2),
       },
     ];
 
@@ -168,7 +188,7 @@ class MusicPlayerDetailScreen extends HookWidget {
                 ),
                 for (final menuItem in menuItems) ...[
                   SlideTransition(
-                    position: profileSlide,
+                    position: menuItem["slide"],
                     child: Row(
                       children: [
                         Icon(menuItem["icon"], color: Colors.grey.shade200),
@@ -186,18 +206,21 @@ class MusicPlayerDetailScreen extends HookWidget {
                   const SizedBox(height: 30),
                 ],
                 const Spacer(),
-                Row(
-                  children: [
-                    Icon(Icons.logout, color: Colors.red.shade400),
-                    const SizedBox(width: 10),
-                    Text(
-                      "Log Out",
-                      style: TextStyle(
-                        color: Colors.red.shade400,
-                        fontSize: 18,
-                      ),
-                    )
-                  ],
+                SlideTransition(
+                  position: logoutSlide,
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout, color: Colors.red.shade400),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Log Out",
+                        style: TextStyle(
+                          color: Colors.red.shade400,
+                          fontSize: 18,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 100),
               ],
